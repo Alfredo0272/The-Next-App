@@ -12,14 +12,17 @@ export async function POST(req: NextRequest) {
         "Email, username, password, and age are required."
       );
     }
+
     const existingUser = await db.user.findUnique({
       where: {
         email: data.email,
       },
     });
+
     if (existingUser) {
       throw new HttpError(400, "User already exists.");
     }
+
     const hashedPassword = await bcrypt.hash(data.password, 10);
     const newUser = await db.user.create({
       data: {
@@ -30,8 +33,17 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    return NextResponse.json(newUser);
+    return NextResponse.json(newUser, { status: 200 });
   } catch (error) {
-    return error;
+    console.error("Registration error:", error);
+
+    if (error instanceof HttpError) {
+      return NextResponse.json({ message: error.message });
+    }
+
+    return NextResponse.json(
+      { message: "Registration failed" },
+      { status: 500 }
+    );
   }
 }
