@@ -28,6 +28,7 @@ export async function POST(req: NextRequest) {
       data: {
         email: data.email,
         name: data.name,
+        surname: data.surname,
         password: hashedPassword,
         age: data.age,
       },

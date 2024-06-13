@@ -10,26 +10,26 @@ export default function AssignUserToProject() {
     formState: { errors },
   } = useForm();
   const router = useRouter();
-  const [error, setError] = useState(null);
-  const [proyect, setProjects] = useState<Proyect[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [projects, setProjects] = useState<Proyect[]>([]);
   const [users, setUsers] = useState<User[]>([]);
 
   useEffect(() => {
     async function fetchProjects() {
       try {
-        const Proyects = await fetch("/api/projects", {
+        const res = await fetch("/api/proyects", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
           },
         });
-        if (!Proyects.ok) {
+        if (!res.ok) {
           throw new Error("Failed to fetch projects");
         }
-        const data = await Proyects.json();
+        const data = await res.json();
         setProjects(data);
       } catch (error) {
-        Error("Failed to load projects");
+        setError("Failed to load projects");
         console.error(error);
       }
     }
@@ -40,23 +40,25 @@ export default function AssignUserToProject() {
   useEffect(() => {
     async function fetchUsers() {
       try {
-        const Users = await fetch("/api/users", {
+        const res = await fetch("/api/users", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
           },
         });
-        if (!Users.ok) {
+        if (!res.ok) {
           throw new Error("Failed to fetch users");
         }
-        const data = await Users.json();
+        const data = await res.json();
         setUsers(data);
       } catch (error) {
-        Error("Failed to load users");
+        setError("Failed to load users");
         console.error(error);
       }
     }
-  });
+
+    fetchUsers();
+  }, []);
 
   const onSubmit = handleSubmit(async (data) => {
     if (data.projectId && data.userId) {
@@ -105,7 +107,7 @@ export default function AssignUserToProject() {
           className="p-3 rounded block mb-2 bg-slate-200 text-slate-700 w-full"
         >
           <option value="">Select a project</option>
-          {proyect.map((project) => (
+          {projects.map((project) => (
             <option key={project.id} value={project.id}>
               {project.title}
             </option>
@@ -131,7 +133,7 @@ export default function AssignUserToProject() {
           ))}
         </select>
 
-        {errors.userId && (
+        {errors.userId?.type === "required" && (
           <p className="text-red-500 text-sm">User ID is required</p>
         )}
 
