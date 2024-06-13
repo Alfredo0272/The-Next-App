@@ -30,15 +30,18 @@ function LoginPage() {
   });
 
   return (
-    <div className="h-[calc(100vh-7rem)] flex justify-center items-center">
-      <form onSubmit={onSubmit} className="w-1/4">
+    <div className="h-[calc(100vh-7rem)] flex justify-center items-center bg-amber-50">
+      <form
+        onSubmit={onSubmit}
+        className="w-1/4 bg-white p-6 rounded-lg shadow-md"
+      >
         {error && (
           <p className="bg-red-500 text-lg text-white p-3 rounded mb-2">
             {error}
           </p>
         )}
 
-        <h1 className="text-slate-200 font-bold text-4xl mb-4">Login</h1>
+        <h1 className="text-slate-600 font-bold text-4xl mb-4">Login</h1>
 
         <label htmlFor="email" className="text-slate-500 mb-2 block text-sm">
           Email:
@@ -49,7 +52,7 @@ function LoginPage() {
             required: true,
           })}
           aria-invalid={errors.email ? "true" : "false"}
-          className="p-3 rounded block mb-2 bg-slate-900 text-slate-300 w-full"
+          className="p-3 rounded block mb-2 bg-slate-200 text-slate-700 w-full"
           placeholder="Your email"
         />
 
@@ -68,7 +71,7 @@ function LoginPage() {
             required: true,
           })}
           aria-invalid={errors.password ? "true" : "false"}
-          className="p-3 rounded block mb-2 bg-slate-900 text-slate-300 w-full"
+          className="p-3 rounded block mb-2 bg-slate-200 text-slate-700 w-full"
           placeholder="********"
         />
 
@@ -85,7 +88,7 @@ function LoginPage() {
           className="text-slate-500 mt-2 block text-sm text-center"
           href={"/auth/register"}
         >
-          Don´t have an account?
+          Don’t have an account?
         </Link>
       </form>
     </div>
