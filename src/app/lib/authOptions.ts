@@ -15,35 +15,45 @@ export const authOptions: NextAuthOptions = {
     CredentialsProvider({
       name: "Credentials",
       credentials: {
-        email: { label: "Email", type: "text", placeholder: "jsmith" },
-        password: { label: "Password", type: "password", placeholder: "*****" },
+        email: {
+          label: "Email",
+          type: "text",
+          placeholder: "jsmith@example.com",
+        },
+        password: { label: "Password", type: "password" },
       },
       async authorize(credentials, req) {
-        if (!credentials?.email || !credentials.password) {
+        const { email, password } = credentials as Record<
+          "email" | "password",
+          string
+        >;
+
+        if (!email || !password) {
           throw new Error("Email and password are required.");
         }
 
         try {
           const user = await db.user.findUnique({
-            where: {
-              email: credentials.email,
-            },
+            where: { email: email },
           });
 
           if (!user) {
             throw new Error("No user found with that email address.");
           }
 
-          const matchPassword = await bcrypt.compare(
-            credentials.password,
-            user.password
-          );
+          const matchPassword = await bcrypt.compare(password, user.password);
 
           if (!matchPassword) {
             throw new Error("Incorrect password.");
           }
 
-          return user;
+          return {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            surname: user.surname,
+            role: user.role,
+          };
         } catch (error) {
           console.error("Error during authorization:", error);
           throw new Error("Authorization failed.");
@@ -54,26 +64,23 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        return {
-          ...token,
-          id: user.id,
-          name: user.name,
-          email: user.email,
-        };
+        token.id = user.id;
+        token.email = user.email;
+        token.name = user.name;
       }
       return token;
     },
     async session({ session, token }) {
-      return {
-        ...session,
-        user: {
-          ...session.user,
-          id: token.id,
-          name: token.name,
-          email: token.email,
-        },
-        jwt: token.jwt,
-      };
+      if (token && typeof token === "object") {
+        session.user.id = token.id as string;
+        session.user.email = token.email as string;
+        session.user.name = token.name as string;
+      } else {
+        console.error("Error: token no tiene las propiedades esperadas.");
+        throw new Error("Error de sesión: token inválido");
+      }
+
+      return session;
     },
   },
 };
