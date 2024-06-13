@@ -17,15 +17,21 @@ export default function NavBar() {
     router.push("/");
   };
 
-  const handleCreateTask = () => {
-    router.push("/tasks/create");
+  const handleCreateProyect = () => {
+    router.push("/proyects");
+  };
+
+  const handleAddUserToProyect = () => {
+    router.push("/proyects/assingUserToProyect");
   };
 
   return (
-    <nav className="flex items-center justify-between flex-wrap bg-teal-500 p-6">
+    <nav className="flex items-center justify-between flex-wrap bg-slate-500 p-6">
       <div className="flex items-center flex-shrink-0 text-white mr-6">
-        <h1 className="text-3xl text-red-500 font-bold">
-          {session ? "Welcome back" : "You are not logged in"}
+        <h1 className="text-3xl text-red-400 font-bold">
+          {session
+            ? `Welcome back ${session?.user.name}`
+            : "You are not logged in"}
         </h1>
       </div>
       <div>
@@ -34,23 +40,29 @@ export default function NavBar() {
             {console.log(session)}
             <button
               onClick={handleSignOut}
-              className="mt-4 lg:mt-0 text-teal-200 hover:text-white mr-4 border-black rounded-lg px-4 py-2"
+              className="mt-4 lg:mt-0 bg-blue-500 text-teal-200 hover:text-white mr-4 border-black rounded-lg px-4 py-2"
             >
               Sign Out
             </button>
             <button
-              onClick={handleCreateTask}
-              className="mt-4 lg:mt-0 text-teal-200 hover:text-white mr-4 border-black rounded-lg px-4 py-2"
+              onClick={handleCreateProyect}
+              className="mt-4 lg:mt-0 bg-blue-500 text-teal-200 hover:text-white mr-4 border-black rounded-lg px-4 py-2"
             >
-              Create Task
+              Create Proyect
+            </button>
+            <button
+              onClick={handleAddUserToProyect}
+              className="mt-4 lg:mt-0 bg-blue-500 text-teal-200 hover:text-white mr-4 border-black rounded-lg px-4 py-2"
+            >
+              Add Users
             </button>
           </>
         ) : (
           <button
             onClick={handleSignIn}
-            className="mt-4 lg:mt-0 text-teal-200 hover:text-white mr-4 border-black rounded-lg px-4 py-2"
+            className="mt-4 lg:mt-0 bg-blue-500 text-teal-200 hover:text-white mr-4 border-black rounded-lg px-4 py-2"
           >
-            <Link href="/auth/login">Sign In</Link>
+            Sign In
           </button>
         )}
       </div>
