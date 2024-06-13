@@ -2,10 +2,10 @@
 
 import { useRouter } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
-import Link from "next/link";
 
 export default function NavBar() {
   const { data: session } = useSession();
+  console.log(session);
   const router = useRouter();
 
   const handleSignIn = () => {
@@ -19,6 +19,10 @@ export default function NavBar() {
 
   const handleCreateProyect = () => {
     router.push("/proyects");
+  };
+
+  const handleCreateTask = () => {
+    router.push("/tasks");
   };
 
   const handleAddUserToProyect = () => {
@@ -49,6 +53,12 @@ export default function NavBar() {
               className="mt-4 lg:mt-0 bg-blue-500 text-teal-200 hover:text-white mr-4 border-black rounded-lg px-4 py-2"
             >
               Create Proyect
+            </button>
+            <button
+              onClick={handleCreateTask}
+              className="mt-4 lg:mt-0 bg-blue-500 text-teal-200 hover:text-white mr-4 border-black rounded-lg px-4 py-2"
+            >
+              Create Task
             </button>
             <button
               onClick={handleAddUserToProyect}
