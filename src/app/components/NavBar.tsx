@@ -2,8 +2,11 @@
 
 import { useRouter } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
+interface NavBarProps {
+  children: React.ReactNode;
+}
 
-export default function NavBar() {
+const NavBar: React.FC<NavBarProps> = ({ children }) => {
   const { data: session } = useSession();
   console.log(session);
   const router = useRouter();
@@ -78,4 +81,6 @@ export default function NavBar() {
       </div>
     </nav>
   );
-}
+};
+
+export default NavBar;
