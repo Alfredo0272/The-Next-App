@@ -1,12 +1,13 @@
 "use client";
 
-import NavBar from "./components/NavBar";
 import Board from "./components/board";
+import NavBar from "./components/NavBar";
 
 export default function Home() {
   return (
-    <NavBar>
-      <Board></Board>
-    </NavBar>
+    <>
+      <NavBar />
+      <Board />
+    </>
   );
 }

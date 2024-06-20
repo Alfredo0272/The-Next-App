@@ -2,11 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { useSession, signOut } from "next-auth/react";
-interface NavBarProps {
-  children: React.ReactNode;
-}
 
-const NavBar: React.FC<NavBarProps> = ({ children }) => {
+export default function NavBar() {
   const { data: session } = useSession();
   console.log(session);
   const router = useRouter();
@@ -30,6 +27,10 @@ const NavBar: React.FC<NavBarProps> = ({ children }) => {
 
   const handleAddUserToProyect = () => {
     router.push("/proyects/assingUserToProyect");
+  };
+
+  const handleBack = () => {
+    router.push("/");
   };
 
   return (
@@ -68,7 +69,13 @@ const NavBar: React.FC<NavBarProps> = ({ children }) => {
               className="mt-4 lg:mt-0 bg-blue-500 text-teal-200 hover:text-white mr-4 border-black rounded-lg px-4 py-2"
             >
               Add Users
-            </button>
+            </button>{" "}
+            <button
+              onClick={handleBack}
+              className="mt-4 lg:mt-0 bg-blue-500 text-teal-200 hover:text-white mr-4 border-black rounded-lg px-4 py-2"
+            >
+              Go Back
+            </button>{" "}
           </>
         ) : (
           <button
@@ -81,6 +88,4 @@ const NavBar: React.FC<NavBarProps> = ({ children }) => {
       </div>
     </nav>
   );
-};
-
-export default NavBar;
+}

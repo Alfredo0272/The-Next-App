@@ -3,5 +3,10 @@
 import RegisterProjectForm from "./Form";
 
 export default function Page() {
-  return <RegisterProjectForm></RegisterProjectForm>;
+  return (
+    <>
+      <NavBar />
+      <RegisterProjectForm></RegisterProjectForm>;
+    </>
+  );
 }

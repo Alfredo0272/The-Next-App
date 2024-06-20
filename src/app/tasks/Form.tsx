@@ -14,6 +14,9 @@ export default function RegisterTaskForm() {
 
   const getSessionAsync = async () => {
     const session = await getSession();
+    if (!session) {
+      router.push("/auth/signin");
+    }
     return session;
   };
 

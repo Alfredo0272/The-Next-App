@@ -27,6 +27,22 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: "User not found" }, { status: 404 });
     }
 
+    const existingAssignment = await db.proyectToUser.findUnique({
+      where: {
+        projectId_userId: {
+          projectId,
+          userId,
+        },
+      },
+    });
+
+    if (existingAssignment) {
+      return NextResponse.json(
+        { message: "User already assigned to this project" },
+        { status: 409 }
+      );
+    }
+
     const projectToUser = await db.proyectToUser.create({
       data: {
         projectId,
