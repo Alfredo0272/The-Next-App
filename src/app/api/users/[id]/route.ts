@@ -1,6 +1,6 @@
 import db from "@/app/lib/prisma";
 
-export default async function GET(id: string) {
+export default async function getUserById(id: string) {
   try {
     if (!id) {
       throw new Error("ID parameter is required.");
