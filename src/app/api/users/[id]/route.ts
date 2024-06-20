@@ -1,7 +1,7 @@
 import db from "@/app/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
-export default async function handler(
+async function handler(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
@@ -10,17 +10,22 @@ export default async function handler(
   try {
     const user = await db.user.findUnique({
       where: {
-        id: id as string,
+        id,
       },
     });
 
     if (!user) {
-      return Error("User not found");
+      return NextResponse.json({ message: "User not found" }, { status: 404 });
     }
 
     return NextResponse.json(user);
   } catch (error) {
     console.error("Error fetching user:", error);
-    return Error("An unexpected error occurred while fetching user.");
+    return NextResponse.json(
+      { message: "An unexpected error occurred while fetching user." },
+      { status: 500 }
+    );
   }
 }
+
+export { handler as GET };
