@@ -1,22 +1,19 @@
 import db from "@/app/lib/prisma";
+import { NextResponse } from "next/server";
 
-export default async function getUserById(id: string) {
+export async function GET(id: string) {
   try {
-    if (!id) {
-      throw new Error("ID parameter is required.");
-    }
-
-    const user = await db.user.findUnique({
-      where: { id: id },
+    const users = await db.user.findUnique({
+      where: {
+        id,
+      },
     });
-
-    if (!user) {
-      return { message: "User not found" };
-    }
-
-    return user;
+    return NextResponse.json(users);
   } catch (error) {
-    console.error("Error getting user:", error);
-    return { message: "An unexpected error occurred while getting user." };
+    console.error("Error fetching user:", error);
+    return NextResponse.json(
+      { message: "An unexpected error occurred while fetching user." },
+      { status: 500 }
+    );
   }
 }
