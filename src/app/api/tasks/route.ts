@@ -1,4 +1,5 @@
 import db from "@/app/lib/prisma";
+import { Status, Task } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -31,19 +32,25 @@ export async function POST(req: NextRequest) {
   }
 }
 
-export async function GET() {
+const getTasks = async (): Promise<Task[]> => {
   try {
-    const tasks = await db.task.findMany({
-      orderBy: {
-        createdAt: "desc",
+    const response = await fetch("../api/tasks", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
       },
     });
-
-    return NextResponse.json(tasks);
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+    const data = await response.json();
+    const tasks: Task[] = data.map((task: any) => ({
+      ...task,
+      status: task.status as Status,
+    }));
+    return tasks;
   } catch (error) {
-    return NextResponse.json(
-      { message: "An unexpected error occurred while fetching tasks." },
-      { status: 500 }
-    );
+    console.error("Unexpected error:", error);
+    return [];
   }
-}
+};
