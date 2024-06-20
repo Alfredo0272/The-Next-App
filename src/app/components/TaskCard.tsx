@@ -22,6 +22,31 @@ async function getUser(userId: string): Promise<User | null> {
 
 export default function TaskCard({ task }: { task: Task }) {
   const [user, setUser] = useState<User | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [users, setUsers] = useState<User[] | null>(null);
+
+  useEffect(() => {
+    async function fetchUsers() {
+      try {
+        const res = await fetch("/api/users", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        if (!res.ok) {
+          throw new Error("Failed to fetch users");
+        }
+        const data = await res.json();
+        setUsers(data);
+      } catch (error) {
+        setError("Failed to load users");
+        console.error(error);
+      }
+    }
+
+    fetchUsers();
+  }, []);
 
   const handleDelete = async () => {
     try {
@@ -42,6 +67,26 @@ export default function TaskCard({ task }: { task: Task }) {
     }
   };
 
+  const handleAssignUser = async (userId: string) => {
+    try {
+      const response = await fetch(`/api/tasks/assignUserToTask`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ taskId: task.id, userId }),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || "Error assigning user to task");
+      }
+      console.log("User assigned successfully");
+      window.location.reload();
+    } catch (error) {
+      console.error("Error assigning user to task:", error);
+    }
+  };
+
   useEffect(() => {
     getUser(task.userId).then(setUser);
   }, [task.userId]);
@@ -59,6 +104,23 @@ export default function TaskCard({ task }: { task: Task }) {
       >
         Delete
       </button>
+      <div>
+        <label htmlFor="user-select" className="block mt-4">
+          Assign to:
+        </label>
+        <select
+          id="user-select"
+          className="mt-2 p-2 border rounded"
+          onChange={(e) => handleAssignUser(e.target.value)}
+        >
+          <option value="">Select a user</option>
+          {users?.map((user) => (
+            <option key={user.id} value={user.id}>
+              {user.name} {user.surname}
+            </option>
+          ))}
+        </select>
+      </div>
     </div>
   );
 }
