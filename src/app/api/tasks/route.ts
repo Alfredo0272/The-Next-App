@@ -32,25 +32,15 @@ export async function POST(req: NextRequest) {
   }
 }
 
-const getTasks = async (): Promise<Task[]> => {
+export async function GET(req: NextRequest) {
   try {
-    const response = await fetch("../api/tasks", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    if (!response.ok) {
-      throw new Error("Network response was not ok");
-    }
-    const data = await response.json();
-    const tasks: Task[] = data.map((task: any) => ({
-      ...task,
-      status: task.status as Status,
-    }));
-    return tasks;
+    const tasks = await db.task.findMany();
+    return NextResponse.json(tasks, { status: 200 });
   } catch (error) {
-    console.error("Unexpected error:", error);
-    return [];
+    console.error("Error getting tasks:", error);
+    return NextResponse.json(
+      { message: "An unexpected error occurred." },
+      { status: 500 }
+    );
   }
-};
+}
