@@ -20,3 +20,32 @@ export async function DELETE(
     );
   }
 }
+
+export async function PATCH(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const { id } = params;
+
+  try {
+    const body = await req.json();
+    if (!id || !body) {
+      return NextResponse.json(
+        { message: "Task ID is required." },
+        { status: 400 }
+      );
+    }
+    const task = await db.task.update({
+      where: { id: id },
+      data: { ...body },
+    });
+
+    return NextResponse.json(task, { status: 200 });
+  } catch (error) {
+    console.error("Error updating task:", error);
+    return NextResponse.json(
+      { message: "An unexpected error occurred while updating the task." },
+      { status: 500 }
+    );
+  }
+}

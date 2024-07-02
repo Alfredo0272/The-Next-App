@@ -20,7 +20,12 @@ async function getUser(userId: string): Promise<User | null> {
   }
 }
 
-export default function TaskCard({ task }: { task: Task }) {
+interface TaskCardProps {
+  task: Task;
+  onDelete: (taskId: string) => void;
+}
+
+export default function TaskCard({ task, onDelete }: TaskCardProps) {
   const [user, setUser] = useState<User | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [users, setUsers] = useState<User[] | null>(null);
@@ -61,7 +66,7 @@ export default function TaskCard({ task }: { task: Task }) {
         throw new Error(data.message || "Error deleting task");
       }
       console.log("Task deleted successfully");
-      window.location.reload();
+      onDelete(task.id);
     } catch (error) {
       console.error("Error deleting task:", error);
     }
@@ -96,7 +101,7 @@ export default function TaskCard({ task }: { task: Task }) {
       <div className="font-bold text-lg">{task.title}</div>
       <div className="text-gray-600">{task.description}</div>
       <div className="text-sm text-gray-500 mt-2">
-        Assigned to: {user ? user.name : "Loading..."}
+        Assigned to: {user ? user.name : "Not assigned"}
       </div>
       <button
         onClick={handleDelete}
