@@ -80,43 +80,37 @@ export default function Board() {
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <div className="board grid grid-cols-4 gap-4">
-        {columns.map((column) => (
-          <Droppable key={column} droppableId={column}>
-            {(provided) => (
-              <div
-                className="column bg-gray-100 p-4 rounded-lg"
-                ref={provided.innerRef}
-                {...provided.droppableProps}
-              >
-                <h2 className="column-title text-lg font-semibold mb-2">
-                  {column}
-                </h2>
-                {tasks
-                  .filter((task) => task.status === column)
-                  .map((task, index) => (
-                    <Draggable
-                      key={task.id}
-                      draggableId={task.id}
-                      index={index}
-                    >
-                      {(provided) => (
-                        <div
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                        >
-                          <TaskCard task={task} onDelete={handleDeleteTask} />
-                        </div>
-                      )}
-                    </Draggable>
-                  ))}
-                {provided.placeholder}
-              </div>
-            )}
-          </Droppable>
-        ))}
-      </div>
+      {columns.map((column) => (
+        <Droppable key={column} droppableId={column}>
+          {(provided) => (
+            <div
+              className="flex-col m-2 bg-gray-100 p-4 rounded-lg"
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+            >
+              <h2 className="column-title text-lg font-semibold mb-2">
+                {column}
+              </h2>
+              {tasks
+                .filter((task) => task.status === column)
+                .map((task, index) => (
+                  <Draggable key={task.id} draggableId={task.id} index={index}>
+                    {(provided) => (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                      >
+                        <TaskCard task={task} onDelete={handleDeleteTask} />
+                      </div>
+                    )}
+                  </Draggable>
+                ))}
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
+      ))}
     </DragDropContext>
   );
 }
