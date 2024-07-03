@@ -11,6 +11,7 @@ export const authOptions: NextAuthOptions = {
   jwt: {
     secret: process.env.JWT_SECRET,
   },
+  secret: process.env.NEXT_AUTH_SECRET,
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -76,7 +77,6 @@ export const authOptions: NextAuthOptions = {
         session.user.email = token.email as string;
         session.user.name = token.name as string;
       } else {
-        console.error("Error: token no tiene las propiedades esperadas.");
         throw new Error("Error de sesión: token inválido");
       }
 
