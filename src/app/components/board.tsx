@@ -12,135 +12,105 @@ import {
 import TaskCard from "./TaskCard";
 
 const getTasks = async (): Promise<Task[]> => {
-  try {
-    const response = await fetch("../api/tasks", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    if (!response.ok) {
-      throw new Error("Network response was not ok");
-    }
-    const data = await response.json();
-    const tasks: Task[] = data.map((task: any) => ({
-      ...task,
-      status: task.status as Status,
-    }));
-    return tasks;
-  } catch (error) {
-    console.error("Unexpected error:", error);
-    return [];
+  const response = await fetch("/api/tasks");
+  if (!response.ok) {
+    throw new Error("Failed to fetch tasks");
   }
+  const data = await response.json();
+  return data;
 };
 
 export default function Board() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchTasks = async () => {
-      try {
-        const data = await getTasks();
-        setTasks(data);
-      } catch (error) {
-        setError("Failed to fetch tasks. Please try again.");
-      } finally {
-        setLoading(false);
+    if (status === "authenticated") {
+      getTasks().then((tasks) => setTasks(tasks));
+    }
+  }, [status]);
+
+  const onDragEnd = async (result: DropResult) => {
+    if (!result.destination) return;
+
+    const sourceStatus = result.source.droppableId as Status;
+    const destinationStatus = result.destination.droppableId as Status;
+    const taskId = result.draggableId;
+
+    if (sourceStatus === destinationStatus) return;
+
+    try {
+      const response = await fetch(`/api/tasks/${taskId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ status: destinationStatus }),
+      });
+
+      if (response.ok) {
+        const updatedTasks = tasks.map((task) =>
+          task.id === taskId ? { ...task, status: destinationStatus } : task
+        );
+
+        setTasks(updatedTasks);
+      } else {
+        console.error("Failed to update task status");
       }
-    };
-    fetchTasks();
-  }, []);
-
-  const onDragEnd = (result: DropResult) => {
-    const { destination, source } = result;
-    if (!destination) return;
-
-    const sourceList = tasks.filter(
-      (task) => task.status === source.droppableId
-    );
-    const destList = tasks.filter(
-      (task) => task.status === destination.droppableId
-    );
-
-    const [removed] = sourceList.splice(source.index, 1);
-    destList.splice(destination.index, 0, removed);
-
-    const newTasks = tasks.map((task) => {
-      if (task.id === removed.id) {
-        return { ...task, status: destination.droppableId as Status };
-      }
-      return task;
-    });
-
-    setTasks(newTasks);
+    } catch (error) {
+      console.error("Error updating task:", error);
+    }
   };
 
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        Loading...
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex justify-center items-center h-screen text-red-500">
-        {error}
-      </div>
-    );
-  }
+  const columns = Object.values(Status);
 
   if (!session) {
     return (
-      <div className="flex justify-center items-center h-screen text-red-500">
-        You are not logged in
+      <div className="flex items-center justify-between flex-wrap bg-slate-500 p-6 m-2 ">
+        <h1 className="text-3xl text-red-400 font-bold flex items-center">
+          Sign in to view this page
+        </h1>
       </div>
     );
   }
 
-  const statuses: Status[] = ["PENDING", "IN_PROGRESS", "COMPLETED"];
+  const handleDeleteTask = (taskId: string) => {
+    setTasks(tasks.filter((task) => task.id !== taskId));
+  };
 
   return (
     <DragDropContext onDragEnd={onDragEnd}>
-      <div className="flex flex-row justify-between p-4 space-x-4">
-        {statuses.map((status) => (
-          <Droppable key={status} droppableId={status}>
-            {(provided) => (
-              <div
-                {...provided.droppableProps}
-                ref={provided.innerRef}
-                className="flex-1 bg-gray-100 p-4 rounded-lg shadow-md"
-              >
-                <h2 className="text-xl font-bold mb-4">{status}</h2>
-                {tasks
-                  .filter((task) => task.status === status)
-                  .map((task, index) => (
-                    <Draggable
-                      key={task.id}
-                      draggableId={task.id.toString()}
-                      index={index}
-                    >
-                      {(provided) => (
-                        <div
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                          ref={provided.innerRef}
-                        >
-                          <TaskCard task={task} />
-                        </div>
-                      )}
-                    </Draggable>
-                  ))}
-                {provided.placeholder}
-              </div>
-            )}
-          </Droppable>
-        ))}
-      </div>
+      {columns.map((column) => (
+        <Droppable key={column} droppableId={column}>
+          {(provided) => (
+            <div
+              className="flex-col m-2 bg-gray-100 p-4 rounded-lg"
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+            >
+              <h2 className="column-title text-lg font-semibold mb-2">
+                {column}
+              </h2>
+              {tasks
+                .filter((task) => task.status === column)
+                .map((task, index) => (
+                  <Draggable key={task.id} draggableId={task.id} index={index}>
+                    {(provided) => (
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                      >
+                        <TaskCard task={task} onDelete={handleDeleteTask} />
+                      </div>
+                    )}
+                  </Draggable>
+                ))}
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
+      ))}
     </DragDropContext>
   );
 }
