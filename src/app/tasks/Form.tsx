@@ -1,7 +1,18 @@
+"use client";
+
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { getSession } from "next-auth/react";
+import { Project } from "@prisma/client";
+
+const getProjects = async () => {
+  const response = await fetch("/api/projects");
+  if (!response.ok) {
+    throw new Error("Failed to fetch projects");
+  }
+  return response.json();
+};
 
 export default function RegisterTaskForm() {
   const router = useRouter();
@@ -10,7 +21,20 @@ export default function RegisterTaskForm() {
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
+  const [projects, setProjects] = useState<Project[]>([]);
+
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const data = await getProjects();
+        setProjects(data);
+      } catch (error) {
+        console.error("Error fetching projects:", error);
+      }
+    };
+    fetchProjects();
+  }, []);
 
   const getSessionAsync = async () => {
     const session = await getSession();
@@ -36,6 +60,7 @@ export default function RegisterTaskForm() {
           title: data.title,
           description: data.description,
           userId: session.user.id,
+          projectId: data.projectId,
           status: "PENDING",
         }),
       });
@@ -44,10 +69,11 @@ export default function RegisterTaskForm() {
         router.push("/");
       } else {
         console.error("Error creating task:", res);
+        setError("Failed to create task. Please try again.");
       }
     } catch (error) {
       console.error("Error submitting form:", error);
-      Error("An unexpected error occurred");
+      setError("An unexpected error occurred.");
     }
   });
 
@@ -79,10 +105,35 @@ export default function RegisterTaskForm() {
           className="p-3 rounded block mb-2 bg-slate-200 text-slate-700 w-full"
           placeholder="Title of your project"
         />
-
         {errors.title?.type === "required" && (
           <p role="alert" className="text-red-500 text-xs">
             Title is required
+          </p>
+        )}
+
+        <label
+          htmlFor="projectId"
+          className="text-slate-500 mb-2 block text-sm"
+        >
+          Project to assign:
+        </label>
+        <select
+          {...register("projectId", {
+            required: true,
+          })}
+          aria-invalid={errors.projectId ? "true" : "false"}
+          className="p-3 rounded block mb-2 bg-slate-200 text-slate-700 w-full"
+        >
+          <option value="">Select a project</option>
+          {projects.map((project) => (
+            <option key={project.id} value={project.id}>
+              {project.title}
+            </option>
+          ))}
+        </select>
+        {errors.projectId?.type === "required" && (
+          <p role="alert" className="text-red-500 text-xs">
+            Project is required
           </p>
         )}
 
@@ -101,7 +152,6 @@ export default function RegisterTaskForm() {
           className="p-3 rounded block mb-2 bg-slate-200 text-slate-700 w-full"
           placeholder="Add a description of your project"
         />
-
         {errors.description?.type === "required" && (
           <p role="alert" className="text-red-500 text-xs">
             Description is required

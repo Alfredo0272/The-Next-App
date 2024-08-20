@@ -13,7 +13,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const project = await db.proyect.findUnique({ where: { id: projectId } });
+    const project = await db.project.findUnique({ where: { id: projectId } });
     const user = await db.user.findUnique({ where: { id: userId } });
 
     if (!project) {
@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: "User not found" }, { status: 404 });
     }
 
-    const existingAssignment = await db.proyectToUser.findUnique({
+    const existingAssignment = await db.projectToUser.findUnique({
       where: {
         projectId_userId: {
           projectId,
@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const projectToUser = await db.proyectToUser.create({
+    const projectToUser = await db.projectToUser.create({
       data: {
         projectId,
         userId,

@@ -1,7 +1,7 @@
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { useState, useEffect } from "react";
-import { Proyect, User } from "@prisma/client";
+import { Project, User } from "@prisma/client";
 import { useSession } from "next-auth/react";
 
 export default function AssignUserToProject() {
@@ -13,7 +13,7 @@ export default function AssignUserToProject() {
   } = useForm();
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
-  const [projects, setProjects] = useState<Proyect[]>([]);
+  const [projects, setProjects] = useState<Project[]>([]);
   const [users, setUsers] = useState<User[]>([]);
   useEffect(() => {
     if (!session) {

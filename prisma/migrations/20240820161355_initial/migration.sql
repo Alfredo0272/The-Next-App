@@ -33,18 +33,18 @@ CREATE TABLE "Task" (
 );
 
 -- CreateTable
-CREATE TABLE "Proyect" (
+CREATE TABLE "Project" (
     "id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "description" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "Proyect_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "Project_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "ProyectToUser" (
+CREATE TABLE "ProjectToUser" (
     "projectId" TEXT NOT NULL,
     "userId" TEXT NOT NULL
 );
@@ -53,19 +53,19 @@ CREATE TABLE "ProyectToUser" (
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
-CREATE INDEX "ProyectToUser_userId_idx" ON "ProyectToUser"("userId");
+CREATE INDEX "ProjectToUser_userId_idx" ON "ProjectToUser"("userId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "ProyectToUser_projectId_userId_key" ON "ProyectToUser"("projectId", "userId");
+CREATE UNIQUE INDEX "ProjectToUser_projectId_userId_key" ON "ProjectToUser"("projectId", "userId");
 
 -- AddForeignKey
 ALTER TABLE "Task" ADD CONSTRAINT "Task_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Task" ADD CONSTRAINT "Task_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "Proyect"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Task" ADD CONSTRAINT "Task_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "Project"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "ProyectToUser" ADD CONSTRAINT "ProyectToUser_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "Proyect"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "ProjectToUser" ADD CONSTRAINT "ProjectToUser_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "Project"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "ProyectToUser" ADD CONSTRAINT "ProyectToUser_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "ProjectToUser" ADD CONSTRAINT "ProjectToUser_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

@@ -5,7 +5,7 @@ import { useSession, signOut } from "next-auth/react";
 
 export default function NavBar() {
   const { data: session } = useSession();
-  console.log(session);
+
   const router = useRouter();
 
   const handleSignIn = () => {
@@ -17,8 +17,8 @@ export default function NavBar() {
     router.push("/");
   };
 
-  const handleCreateProyect = () => {
-    router.push("/proyects");
+  const handleCreateProject = () => {
+    router.push("/projects");
   };
 
   const handleCreateTask = () => {
@@ -53,7 +53,7 @@ export default function NavBar() {
               Sign Out
             </button>
             <button
-              onClick={handleCreateProyect}
+              onClick={handleCreateProject}
               className="mt-4 lg:mt-0 bg-blue-500 text-teal-200 hover:text-white mr-4 border-black rounded-lg px-4 py-2"
             >
               Create Proyect
