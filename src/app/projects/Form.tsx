@@ -13,7 +13,7 @@ export default function RegisterProjectForm() {
 
   const onSubmit = handleSubmit(async (data) => {
     if (data.title && data.description) {
-      const res = await fetch("/api/proyects", {
+      const res = await fetch("/api/projects", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -41,7 +41,7 @@ export default function RegisterProjectForm() {
         )}
 
         <h1 className="text-slate-600 font-bold text-4xl mb-4">
-          Create New Proyect
+          Create New Project
         </h1>
 
         <label htmlFor="email" className="text-slate-500 mb-2 block text-sm">

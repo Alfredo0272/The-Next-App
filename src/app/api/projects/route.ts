@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const newProyect = await db.proyect.create({
+    const newProyect = await db.project.create({
       data: {
         title: data.title,
         description: data.description,
@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
 
 export async function GET() {
   try {
-    const projects = await db.proyect.findMany();
+    const projects = await db.project.findMany();
     return NextResponse.json(projects);
   } catch (error) {
     return NextResponse.json(
