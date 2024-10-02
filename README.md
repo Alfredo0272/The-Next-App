@@ -1,36 +1,54 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# The Next App
 
-## Getting Started
+## Descripcion
 
-First, run the development server:
+Next App es una aplicación de gestión de proyectos, similar a Trello, diseñada con la tecnología Next.js. Su objetivo principal es facilitar la organización y seguimiento de tareas para usuarios individuales o equipos. Los usuarios pueden registrarse, crear proyectos y gestionar tareas de forma sencilla gracias a su funcionalidad de Drag and Drop.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Funcionalidades Principales
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+-Registro de los usuarios y Login de los mismos
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+La aplicación proporciona un sistema de registro y autenticación para que los usuarios puedan gestionar sus cuentas de manera segura.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+-Creacion de proyectos 
 
-## Learn More
+Los administradores pueden crear proyectos, a los que añadirán tareas y asignarán usuarios para colaborar en ellos.
 
-To learn more about Next.js, take a look at the following resources:
+-Creacion de tareas
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Los administradores crean y gestionan tareas, que aparecerán en el panel de tareas pendientes del proyecto.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+-Asignacion de usuarios
 
-## Deploy on Vercel
+Los usuarios asignados a las tareas podrán moverlas entre diferentes fases (como "Pendiente", "En Progreso", "Completada") utilizando la funcionalidad de Drag and Drop, según vayan avanzando en ellas.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Tecnologia Empleada
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+- Next.js: Framework de React utilizado para el desarrollo del frontend y la estructura de la aplicación.
+  
+- Prisma: ORM empleado para la gestión de la base de datos MySQL, facilitando las consultas y el modelado de datos.
+  
+- Vercel: Plataforma utilizada para el despliegue y alojamiento de la aplicación, optimizando el rendimiento, asi como proporcionando la base de datos SQL.
+
+- Tailwind CSS: Framework CSS utilizado para el diseño de una interfaz limpia y responsive.
+
+## Instrucciones de Ejecución
+
+
+1º Clone el repositorio:
+
+`https://github.com/Alfredo0272/The-Next-App.git`
+
+2º Navegue al directorio del proyecto:
+
+`cd The-Next-App`
+
+3º Instale las dependencias:
+
+`npm install`
+
+4º Inicie el servidor
+
+`npm run dev`
+
+Con estos pasos, el frontend estará configurado y en ejecución.
